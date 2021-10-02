@@ -82,6 +82,17 @@ func (mask NestedMask) Filter(msg proto.Message) {
 				for i := 0; i < list.Len(); i++ {
 					m.Filter(list.Get(i).Message().Interface())
 				}
+			} else if fd.IsMap() {
+				kv := rft.Get(fd).Map()
+				kv.Range(func(_ protoreflect.MapKey, v protoreflect.Value) bool {
+					switch v.Interface().(type) {
+					case protoreflect.Message:
+						m.Filter(v.Message().Interface())
+						return true
+					default:
+						return false
+					}
+				})
 			} else if fd.Kind() == protoreflect.MessageKind {
 				m.Filter(rft.Get(fd).Message().Interface())
 			}
@@ -117,6 +128,17 @@ func (mask NestedMask) Prune(msg proto.Message) {
 				for i := 0; i < list.Len(); i++ {
 					m.Prune(list.Get(i).Message().Interface())
 				}
+			} else if fd.IsMap() {
+				kv := rft.Get(fd).Map()
+				kv.Range(func(_ protoreflect.MapKey, v protoreflect.Value) bool {
+					switch v.Interface().(type) {
+					case protoreflect.Message:
+						m.Prune(v.Message().Interface())
+						return true
+					default:
+						return false
+					}
+				})
 			} else if fd.Kind() == protoreflect.MessageKind {
 				m.Prune(rft.Get(fd).Message().Interface())
 			}
