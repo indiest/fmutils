@@ -1,4 +1,4 @@
-module github.com/mennanov/fmutils
+module github.com/indiest/fmutils
 
 go 1.15
 
